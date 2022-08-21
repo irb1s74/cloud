@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Recent",
+    "path": "recent",
+    "icon": "cloc"
+  },
+  {
+    "name": "Files",
+    "path": "files",
+    "icon": "folder"
+  },
+  {
+    "name": "Trash",
+    "path": "trash",
+    "icon": "trash"
+  }
+]
