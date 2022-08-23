@@ -22,9 +22,8 @@ export class FileService {
       const parentFile = await this.fileRepository.findByPk(parent);
       if (parentFile) {
         file.path = `${parentFile.path}\\${file.name}`;
-        this.createFile(file);
         file.parentId = parent;
-        await parentFile.save();
+        this.createFile(file);
       } else {
         file.path = name;
         this.createFile(file);
@@ -42,6 +41,7 @@ export class FileService {
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });
       } else {
+        file.destroy();
         throw new HttpException('File already exist', HttpStatus.BAD_REQUEST);
       }
     } catch (e) {
@@ -59,18 +59,18 @@ export class FileService {
     );
   }
 
-  async uploadFile(files, userId, parentId) {
+  async uploadFile(files, parentId, req) {
     try {
       const file = files;
-
       const parent = await this.fileRepository.findOne({
         where: {
-          userId: userId,
+          userId: req.user.id,
           id: parentId,
         },
       });
-      const user = await this.userRepository.findByPk(userId);
+      const user = await this.userRepository.findByPk(req.user.id);
 
+      //check user diskSpace
       if (user.usedSpace + file.size > user.diskSpace) {
         return new HttpException(
           'There no space on the disk',
@@ -80,28 +80,30 @@ export class FileService {
 
       user.usedSpace = user.usedSpace + file.size;
 
-      let path;
+      let checkFilePath;
       if (parent) {
-        path = `${path.resolve(__dirname, 'files')}\\${user.id}\\${
-          parent.path
-        }\\${file.name}`;
+        checkFilePath = `${path.resolve(__dirname, '..', 'static/files')}\\${
+          user.id
+        }\\${parent.path}\\${file.originalname}`;
       } else {
-        path = `${path.resolve(__dirname, 'files')}\\${user.id}\\${file.name}`;
+        checkFilePath = `${path.resolve(__dirname, '..', 'static/files')}\\${
+          user.id
+        }\\${file.originalname}`;
       }
 
-      if (fs.existsSync(path)) {
+      if (fs.existsSync(checkFilePath)) {
         return new HttpException('File already exist', HttpStatus.BAD_REQUEST);
       }
-      file.mv(path);
+      fs.writeFileSync(checkFilePath, file.buffer);
 
-      const type = file.name.split('.').pop();
-      let filePath = file.name;
+      const type = file.originalname.split('.').pop();
+      let filePath = file.originalname;
       if (parent) {
-        filePath = parent.path + '\\' + file.name;
+        filePath = parent.path + '\\' + file.originalname;
       }
 
       const dbFile = await this.fileRepository.create({
-        name: file.name,
+        name: file.originalname,
         type,
         userId: user.id,
       });
@@ -114,16 +116,32 @@ export class FileService {
 
       return dbFile;
     } catch (e) {
-      throw new HttpException('Error upload file', HttpStatus.BAD_REQUEST);
+      throw new HttpException(`Error upload file ${e}`, HttpStatus.BAD_REQUEST);
     }
   }
 
   async deleteFile(file) {
-    const path = await this.getPath(file);
+    const path = this.getPath(file);
     if (file.type === 'dir') {
       fs.rmdirSync(path);
     } else {
       fs.unlinkSync(path);
+    }
+  }
+
+  async downloadFile(fileId, req): Promise<{ path: string; fileName: string }> {
+    try {
+      const file = await this.fileRepository.findOne({
+        where: { id: fileId },
+      });
+      const path = this.getPath(file);
+      if (fs.existsSync(path)) {
+        // return readFileSync(path);
+        return { path, fileName: file.name };
+      }
+      new HttpException(`File not found`, HttpStatus.NOT_FOUND);
+    } catch (e) {
+      throw new HttpException(`Download error ${e}`, HttpStatus.BAD_REQUEST);
     }
   }
 }

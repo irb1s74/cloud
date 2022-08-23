@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   Req,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -22,12 +25,21 @@ export class FileController {
     return this.fileService.createDir(dto.name, dto.parent, req);
   }
 
-  @Post('/update')
+  @Post('/upload')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   update(
+    @Req() req: Request,
     @UploadedFile() file,
-    @Body() dto: { parent?: number; userId: number }
+    @Body() dto: { parent?: number }
   ) {
-    return this.fileService.uploadFile(file, dto.userId, dto.parent);
+    return this.fileService.uploadFile(file, dto.parent, req);
+  }
+
+  @Get('/download/:id')
+  // @UseGuards(AuthGuard)
+  async downloadFile(@Param('id') fileId, @Req() req: Request, @Res() res) {
+    const file = await this.fileService.downloadFile(fileId, req);
+    return res.download(file?.path, file?.fileName);
   }
 }
