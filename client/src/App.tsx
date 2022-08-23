@@ -5,19 +5,17 @@ import Router from './router/Router';
 
 const App = () => {
   return (
-    <>
+    <div id='parentEl'>
       <Header />
       <main className='flex'>
         <Sidebar />
-        <Router/>
+        <Router />
       </main>
-    </>
+    </div>
   );
 };
 
 const ContainerApp = () => {
-  return (
-    <App />
-  );
+  return <App />;
 };
 export default ContainerApp;

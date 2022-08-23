@@ -1,2 +1,2 @@
-docker-compose -p vibe up --build
+docker-compose -p cloud up --build
 pause
