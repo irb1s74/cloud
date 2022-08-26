@@ -17,8 +17,7 @@ const Header: FC<HeaderProps> = ({ handleLogout }) => {
     <header className='header'>
       <Logo />
       <Breadcrumbs />
-      <Actions />
-      <Logout handleLogout={handleLogout} />
+      <Actions handleLogout={handleLogout} />
     </header>
   );
 };

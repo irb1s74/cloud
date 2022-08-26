@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -18,6 +19,22 @@ import { Request } from 'express';
 @Controller('file')
 export class FileController {
   constructor(private fileService: FileService) {}
+
+  @Get('/:parent/:sort')
+  @UseGuards(AuthGuard)
+  getFiles(@Param('sort') sort, @Param('parent') parent, @Req() req: Request) {
+    return this.fileService.getFiles(parent, sort, req);
+  }
+
+  @Post('/path')
+  @UseGuards(AuthGuard)
+  getFilesByPath(
+    @Param('sort') sort,
+    @Param('parent') parent,
+    @Req() req: Request
+  ) {
+    return this.fileService.getFiles(parent, sort, req);
+  }
 
   @Post('/create')
   @UseGuards(AuthGuard)
@@ -37,9 +54,15 @@ export class FileController {
   }
 
   @Get('/download/:id')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async downloadFile(@Param('id') fileId, @Req() req: Request, @Res() res) {
     const file = await this.fileService.downloadFile(fileId, req);
     return res.download(file?.path, file?.fileName);
+  }
+
+  @Delete('/delete/:id')
+  @UseGuards(AuthGuard)
+  async deleteFile(@Param('id') fileId, @Req() req: Request) {
+    return this.fileService.deleteFile(fileId, req);
   }
 }

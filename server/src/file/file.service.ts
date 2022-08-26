@@ -12,6 +12,25 @@ export class FileService {
     @InjectModel(User) private userRepository: typeof User
   ) {}
 
+  async getFiles(parent, sort, req) {
+    try {
+      switch (sort) {
+        case 'recent':
+          return await this.fileRepository.findAll({
+            where: { userId: req.user.id, parentId: parent },
+            order: [['createdAt', 'DESC']],
+          });
+        default:
+          return await this.fileRepository.findAll({
+            where: { userId: req.user.id, parentId: parent },
+            order: [['createdAt', 'ASC']],
+          });
+      }
+    } catch (e) {
+      throw new HttpException(`Get files error ${e}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async createDir(name: string, parent: number, req) {
     try {
       const file = await this.fileRepository.create({
@@ -25,6 +44,7 @@ export class FileService {
         file.parentId = parent;
         this.createFile(file);
       } else {
+        file.parentId = 0;
         file.path = name;
         this.createFile(file);
       }
@@ -70,7 +90,6 @@ export class FileService {
       });
       const user = await this.userRepository.findByPk(req.user.id);
 
-      //check user diskSpace
       if (user.usedSpace + file.size > user.diskSpace) {
         return new HttpException(
           'There no space on the disk',
@@ -78,7 +97,7 @@ export class FileService {
         );
       }
 
-      user.usedSpace = user.usedSpace + file.size;
+      user.usedSpace += file.size;
 
       let checkFilePath;
       if (parent) {
@@ -109,7 +128,7 @@ export class FileService {
       });
       dbFile.size = file.size;
       dbFile.path = filePath;
-      dbFile.parentId = parent ? parent.id : null;
+      dbFile.parentId = parent ? parent.id : 0;
 
       await dbFile.save();
       await user.save();
@@ -120,23 +139,50 @@ export class FileService {
     }
   }
 
-  async deleteFile(file) {
-    const path = this.getPath(file);
-    if (file.type === 'dir') {
-      fs.rmdirSync(path);
-    } else {
-      fs.unlinkSync(path);
+  async deleteFile(fileId, req) {
+    try {
+      const file = await this.fileRepository.findOne({
+        where: {
+          id: fileId,
+          userId: req.user.id,
+        },
+      });
+      const user = await this.userRepository.findByPk(req.user.id);
+      if (file.type === 'dir') {
+        const childFiles = await this.fileRepository.findAll({
+          where: {
+            parentId: fileId,
+          },
+        });
+        if (childFiles) {
+          childFiles.forEach((file) => {
+            fs.unlinkSync(this.getPath(file));
+            user.usedSpace -= file.size;
+            file.destroy();
+          });
+        }
+        fs.rmdirSync(this.getPath(file));
+        await file.destroy();
+        await user.save();
+      } else {
+        fs.unlinkSync(this.getPath(file));
+        user.usedSpace -= file.size;
+        await file.destroy();
+        await user.save();
+      }
+      new HttpException(`Files delete`, HttpStatus.OK);
+    } catch (e) {
+      throw new HttpException(`Delete file error ${e}`, HttpStatus.BAD_REQUEST);
     }
   }
 
   async downloadFile(fileId, req): Promise<{ path: string; fileName: string }> {
     try {
       const file = await this.fileRepository.findOne({
-        where: { id: fileId },
+        where: { id: fileId, userId: req.user.id },
       });
       const path = this.getPath(file);
       if (fs.existsSync(path)) {
-        // return readFileSync(path);
         return { path, fileName: file.name };
       }
       new HttpException(`File not found`, HttpStatus.NOT_FOUND);

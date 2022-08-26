@@ -27,6 +27,8 @@
       color: var(--light-color);
       background-color: var(--accent-color) !important;
     }
+
+
   }
 
   &__uploadIcon {
@@ -53,9 +55,13 @@
       cursor: pointer;
 
       &-active {
-        background-color: rgba(0, 194, 255, 0.1);
+        background-color: rgba(0, 194, 255, 0.2);
         border-left: 5px solid var(--accent-color);
         color: var(--accent-color);
+      }
+
+      &:hover {
+        background-color: rgba(0, 194, 255, 0.1);
       }
 
       .wrapper {

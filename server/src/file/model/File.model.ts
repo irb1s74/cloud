@@ -3,7 +3,6 @@ import {
   Column,
   DataType,
   ForeignKey,
-  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -29,7 +28,7 @@ export class File extends Model<File, FileCreationAttrs> {
   @ForeignKey(() => User)
   userId: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: true })
+  @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: 0 })
   parentId: number;
 
   @Column({ type: DataType.STRING, allowNull: false })
@@ -46,18 +45,6 @@ export class File extends Model<File, FileCreationAttrs> {
 
   @Column({ type: DataType.STRING, defaultValue: '' })
   path: string;
-
-  @BelongsTo(() => File, {
-    as: 'parent',
-    foreignKey: 'parentId',
-  })
-  parent: File;
-
-  @HasMany(() => File, {
-    as: 'child',
-    foreignKey: 'id',
-  })
-  child: File[];
 
   @BelongsTo(() => User)
   user: User;

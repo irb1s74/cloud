@@ -1,27 +1,27 @@
-import React, {FC, memo} from 'react';
-import {useGoogleLogout} from "react-google-login";
-import {googleSetting} from "../../../helpers/googleSetting";
-import {BiLogOut} from "react-icons/bi";
+import React, { FC, memo } from 'react';
+import { BiLogOut } from 'react-icons/bi';
+import { useGoogleLogout } from 'react-google-login';
+import { googleSetting } from '../../../helpers/googleSetting';
+import './AuthBtn.scss';
 
 interface LogoutProps {
-    handleLogout: () => void
+  handleLogout: () => void;
 }
 
-const Logout: FC<LogoutProps> = ({handleLogout}) => {
+const Logout: FC<LogoutProps> = ({ handleLogout }) => {
+  const onLogoutSuccess = () => {
+    handleLogout();
+  };
 
-    const onLogoutSuccess = () => {
-        handleLogout()
-    };
-
-    const {signOut} = useGoogleLogout({
-        clientId: googleSetting.clientId,
-        onLogoutSuccess,
-    });
-    return (
-        <button onClick={signOut} className="absolute top-3 right-3 text-indigo-500">
-            <BiLogOut size={28}/>
-        </button>
-    );
+  const { signOut } = useGoogleLogout({
+    clientId: googleSetting.clientId,
+    onLogoutSuccess,
+  });
+  return (
+    <div className='logout-btn' onClick={signOut}>
+      <BiLogOut size={28} />
+    </div>
+  );
 };
 
 export default memo(Logout);

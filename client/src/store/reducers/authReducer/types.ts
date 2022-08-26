@@ -4,6 +4,7 @@ export interface AuthState {
   user: IUser;
   isAuth: boolean;
   isAuthLoading: boolean;
+  isUserLoading: boolean;
   messageError: string;
 }
 
