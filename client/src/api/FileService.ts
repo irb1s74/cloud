@@ -20,6 +20,21 @@ const fileAPI = createApi({
         method: 'GET',
       }),
     }),
+    getFilesByPath: build.query<
+      IFile[],
+      { path: string | undefined; token: string }
+    >({
+      query: ({ path = '', token }) => ({
+        url: `file/path`,
+        body: { path },
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: 'Bearer ' + token,
+        },
+        method: 'POST',
+      }),
+    }),
   }),
 });
 export default fileAPI;

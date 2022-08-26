@@ -5,11 +5,12 @@ import { getFileIcon } from '../../../helpers/getFileIcons';
 
 interface FileProps {
   file: IFile;
+  active: boolean;
 }
 
-const File: FC<FileProps> = ({ file }) => {
+const File: FC<FileProps> = ({ file, active }) => {
   return (
-    <div className='file'>
+    <div className={`file ${active ? 'file-active' : ''}`}>
       <div className='file__icon'>{getFileIcon(file.type)}</div>
       <div className='file__name'>{file.name}</div>
     </div>

@@ -28,12 +28,8 @@ export class FileController {
 
   @Post('/path')
   @UseGuards(AuthGuard)
-  getFilesByPath(
-    @Param('sort') sort,
-    @Param('parent') parent,
-    @Req() req: Request
-  ) {
-    return this.fileService.getFiles(parent, sort, req);
+  getFilesByPath(@Body() dto: { path: string }, @Req() req: Request) {
+    return this.fileService.getFilesByPath(dto.path, req);
   }
 
   @Post('/create')

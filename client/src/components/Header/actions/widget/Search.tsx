@@ -3,10 +3,10 @@ import { HiSearch } from 'react-icons/hi';
 
 const HeaderSearch = () => {
   return (
-    <React.Fragment>
+    <div className='header__search'>
       <HiSearch className='icon-search' size='22' />
       <input className='input-reset input-search' placeholder='Поиск' />
-    </React.Fragment>
+    </div>
   );
 };
 

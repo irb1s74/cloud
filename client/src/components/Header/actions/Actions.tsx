@@ -4,6 +4,8 @@ import Avatar from '../../UI/Avatar/Avatar';
 import DropList from '../../UI/DropList/DropList';
 import { MenuItem } from '@mui/material';
 import Logout from '../../UI/GoogleButton/Logout';
+import { useGoogleLogout } from 'react-google-login';
+import { googleSetting } from '../../../helpers/googleSetting';
 
 interface HeaderActionsProps {
   handleLogout: () => void;
@@ -18,20 +20,26 @@ const HeaderActions: FC<HeaderActionsProps> = ({ handleLogout }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const onLogoutSuccess = () => {
+    handleLogout();
+  };
+  const { signOut } = useGoogleLogout({
+    clientId: googleSetting.clientId,
+    onLogoutSuccess,
+  });
+
   return (
     <React.Fragment>
       <div className='header__actions'>
-        <div className='header__search'>
-          <Search />
-        </div>
+        <Search />
         <div onClick={handleClick} className='header__user'>
           <Avatar />
         </div>
       </div>
       <DropList anchorEl={anchorEl} open={open} handleClose={handleClose}>
-        <MenuItem>
+        <MenuItem onClick={signOut}>
           <div className='menu-text'>Выйти</div>
-          <Logout handleLogout={handleLogout} />
+          <Logout />
         </MenuItem>
       </DropList>
     </React.Fragment>

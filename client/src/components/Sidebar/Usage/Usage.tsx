@@ -21,7 +21,7 @@ const SidebarUsage: FC<SidebarUsageProps> = ({
         value={value}
       />
       <div className='text'>
-        {sizeFormatter(unUsedSpace)} из {sizeFormatter(userDiskSpace)}
+        Свободно {sizeFormatter(unUsedSpace)} из {sizeFormatter(userDiskSpace)}
       </div>
     </div>
   );

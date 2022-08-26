@@ -15,10 +15,20 @@ export class FileService {
   async getFiles(parent, sort, req) {
     try {
       switch (sort) {
-        case 'recent':
+        case 'time':
           return await this.fileRepository.findAll({
             where: { userId: req.user.id, parentId: parent },
             order: [['createdAt', 'DESC']],
+          });
+        case 'name':
+          return await this.fileRepository.findAll({
+            where: { userId: req.user.id, parentId: parent },
+            order: [['name', 'DESC']],
+          });
+        case 'size':
+          return await this.fileRepository.findAll({
+            where: { userId: req.user.id, parentId: parent },
+            order: [['size', 'DESC']],
           });
         default:
           return await this.fileRepository.findAll({
@@ -26,6 +36,23 @@ export class FileService {
             order: [['createdAt', 'ASC']],
           });
       }
+    } catch (e) {
+      throw new HttpException(`Get files error ${e}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getFilesByPath(path, req) {
+    try {
+      if (path === '/' || path === '') {
+        return this.getFiles(0, 'def', req);
+      }
+      const parent = await this.fileRepository.findOne({
+        where: { userId: req.user.id, path: path },
+      });
+      if (parent) {
+        return this.getFiles(parent.id, 'def', req);
+      }
+      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     } catch (e) {
       throw new HttpException(`Get files error ${e}`, HttpStatus.BAD_REQUEST);
     }

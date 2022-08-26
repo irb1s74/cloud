@@ -1,9 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authReducer from './reducers/authReducer';
+import fileReducer from './reducers/fileReducer';
 import fileAPI from '../api/FileService';
 
 const rootReducer = combineReducers({
   authReducer,
+  fileReducer,
   [fileAPI.reducerPath]: fileAPI.reducer,
 });
 

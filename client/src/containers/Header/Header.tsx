@@ -3,7 +3,6 @@ import './Header.scss';
 import Breadcrumbs from '../../components/Header/Breadcrumbs/Breadcrumbs';
 import Actions from '../../components/Header/actions/Actions';
 import Logo from '../../components/Header/Logo/Logo';
-import Logout from '../../components/UI/GoogleButton/Logout';
 import { authSlice } from '../../store/reducers/authReducer';
 import { IUser } from '../../models/IUser';
 import { useAppDispatch } from '../../hooks/redux';
