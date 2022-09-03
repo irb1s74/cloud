@@ -6,12 +6,14 @@ import { MenuItem } from '@mui/material';
 import Logout from '../../UI/GoogleButton/Logout';
 import { useGoogleLogout } from 'react-google-login';
 import { googleSetting } from '../../../helpers/googleSetting';
+import { IUser } from '../../../models/IUser';
 
 interface HeaderActionsProps {
   handleLogout: () => void;
+  user: IUser;
 }
 
-const HeaderActions: FC<HeaderActionsProps> = ({ handleLogout }) => {
+const HeaderActions: FC<HeaderActionsProps> = ({ handleLogout, user }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -33,7 +35,7 @@ const HeaderActions: FC<HeaderActionsProps> = ({ handleLogout }) => {
       <div className='header__actions'>
         <Search />
         <div onClick={handleClick} className='header__user'>
-          <Avatar />
+          <Avatar user={user} />
         </div>
       </div>
       <DropList anchorEl={anchorEl} open={open} handleClose={handleClose}>

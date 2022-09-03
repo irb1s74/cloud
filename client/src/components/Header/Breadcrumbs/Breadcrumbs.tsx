@@ -28,8 +28,7 @@ const HeaderBreadcrumbs = () => {
     };
   };
 
-  const parent = location.pathname.split('/').splice(1, 1)[0].split('');
-  parent.splice(0, 1, parent[0].toUpperCase()).join('');
+  const parent = location.pathname.split('/')[1];
   return (
     <div className='header__breadcrumbs'>
       <Breadcrumbs maxItems={4} aria-label='breadcrumb'>

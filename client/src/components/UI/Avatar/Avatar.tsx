@@ -8,7 +8,6 @@ interface AvatarProps {
 }
 
 const Avatar: FC<AvatarProps> = ({ user = {} as IUser }) => {
-
   return (
     <div className='avatar'>
       <img

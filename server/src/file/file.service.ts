@@ -78,7 +78,11 @@ export class FileService {
       await file.save();
       return file;
     } catch (e) {
-      throw new HttpException(`Create dir error ${e}`, HttpStatus.BAD_REQUEST);
+      console.log(e);
+      throw new HttpException(
+        `Create dir error ${e.response}`,
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 

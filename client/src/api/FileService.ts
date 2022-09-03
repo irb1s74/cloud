@@ -5,6 +5,7 @@ import { IFile } from '../models/IFile';
 const fileAPI = createApi({
   reducerPath: 'fileAPI',
   baseQuery: fetchBaseQuery({ baseUrl: ROOT_URL }),
+  tagTypes: ['Files'],
   endpoints: (build) => ({
     getFiles: build.query<
       IFile[],
@@ -19,6 +20,7 @@ const fileAPI = createApi({
         },
         method: 'GET',
       }),
+      providesTags: (result) => ['Files'],
     }),
     getFilesByPath: build.query<
       IFile[],
@@ -34,6 +36,23 @@ const fileAPI = createApi({
         },
         method: 'POST',
       }),
+      providesTags: (result) => ['Files'],
+    }),
+    createDir: build.mutation<
+      IFile[],
+      { parentId: number | undefined; token: string; name: string }
+    >({
+      query: ({ parentId = 0, token, name }) => ({
+        url: `file/create`,
+        body: { name, parent: parentId },
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: 'Bearer ' + token,
+        },
+        method: 'POST',
+      }),
+      invalidatesTags: ['Files'],
     }),
   }),
 });

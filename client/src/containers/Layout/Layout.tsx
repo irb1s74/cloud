@@ -46,22 +46,24 @@ const Layout: FC<LayoutProps> = ({ user }) => {
   };
 
   return (
-    <section className='layout'>
-      {isLoading && <h1>Идет загрузка...</h1>}
-      {error && <h1>Произошла ошибка при загрузке</h1>}
-      <div className='layout__grid'>
-        {files &&
-          files.map((file, index) => (
-            <div
-              key={file.id}
-              onClick={handleSelectFile(index)}
-              className='layout__grid-item'
-            >
-              <File active={selectFile === index} file={file} />
-            </div>
-          ))}
-      </div>
-    </section>
+    <React.Fragment>
+      <section className='layout'>
+        {isLoading && <h1>Идет загрузка...</h1>}
+        {error && <h1>Произошла ошибка при загрузке</h1>}
+        <div className='layout__grid'>
+          {files &&
+            files.map((file, index) => (
+              <div
+                key={file.id}
+                onClick={handleSelectFile(index)}
+                className='layout__grid-item'
+              >
+                <File active={selectFile === index} file={file} />
+              </div>
+            ))}
+        </div>
+      </section>
+    </React.Fragment>
   );
 };
 

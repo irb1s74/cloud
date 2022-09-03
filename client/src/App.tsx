@@ -6,14 +6,17 @@ import { gapi, loadAuth2 } from 'gapi-script';
 import { googleSetting } from './helpers/googleSetting';
 import { authSlice } from './store/reducers/authReducer';
 import { authLogin } from './store/reducers/authReducer/action';
-import { useAppDispatch } from './hooks/redux';
+import { useAppDispatch, useAppSelector } from './hooks/redux';
+import { IModal } from './models/IModal';
+import { getModal } from './helpers/getModal';
 
 interface AppProps {
   setAuthLoading: (payload: boolean) => void;
   handleAuth: (token: string) => void;
+  modals: IModal[];
 }
 
-const App: FC<AppProps> = ({ handleAuth, setAuthLoading }) => {
+const App: FC<AppProps> = ({ handleAuth, setAuthLoading, modals }) => {
   useLayoutEffect(() => {
     const setAuth2 = async () => {
       const auth2 = await loadAuth2(gapi, googleSetting.clientId, 'email');
@@ -25,6 +28,9 @@ const App: FC<AppProps> = ({ handleAuth, setAuthLoading }) => {
     };
     setAuth2();
   }, []);
+  const getModals = (modals: IModal[]) => {
+    return modals.map((modal, key) => getModal(key, modal.type, modal.option));
+  };
 
   return (
     <>
@@ -33,6 +39,7 @@ const App: FC<AppProps> = ({ handleAuth, setAuthLoading }) => {
         <Sidebar />
         <Router />
       </main>
+      {getModals(modals)}
     </>
   );
 };
@@ -47,6 +54,14 @@ const ContainerApp = () => {
     (token: string) => dispatch(authLogin(token)),
     []
   );
-  return <App setAuthLoading={setAuthLoading} handleAuth={handleAuth} />;
+  const modals = useAppSelector((state) => state.modalReducer.modals);
+
+  return (
+    <App
+      modals={modals}
+      setAuthLoading={setAuthLoading}
+      handleAuth={handleAuth}
+    />
+  );
 };
 export default ContainerApp;
