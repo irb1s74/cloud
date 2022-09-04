@@ -43,32 +43,32 @@ export class FileService {
 
   async getFilesByPath(path, req) {
     try {
-      if (path === '/' || path === '') {
-        return this.getFiles(0, 'def', req);
-      }
       const parent = await this.fileRepository.findOne({
         where: { userId: req.user.id, path: path },
       });
       if (parent) {
         return this.getFiles(parent.id, 'def', req);
       }
+      return this.getFiles(0, 'def', req);
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     } catch (e) {
       throw new HttpException(`Get files error ${e}`, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async createDir(name: string, parent: number, req) {
+  async createDir(name: string, path: string, req) {
     try {
       const file = await this.fileRepository.create({
         name,
         type: 'dir',
         userId: req.user.id,
       });
-      const parentFile = await this.fileRepository.findByPk(parent);
+      const parentFile = await this.fileRepository.findOne({
+        where: { userId: req.user.id, path: path },
+      });
       if (parentFile) {
         file.path = `${parentFile.path}\\${file.name}`;
-        file.parentId = parent;
+        file.parentId = parentFile.id;
         this.createFile(file);
       } else {
         file.parentId = 0;
@@ -86,37 +86,13 @@ export class FileService {
     }
   }
 
-  createFile(file: File) {
-    const filePath = this.getPath(file);
-    try {
-      if (!fs.existsSync(filePath)) {
-        fs.mkdirSync(filePath, { recursive: true });
-      } else {
-        file.destroy();
-        throw new HttpException('File already exist', HttpStatus.BAD_REQUEST);
-      }
-    } catch (e) {
-      throw new HttpException(`Create file error ${e}`, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  getPath(file: File) {
-    return (
-      path.resolve(__dirname, '..', 'static/files') +
-      '\\' +
-      file.userId +
-      '\\' +
-      file.path
-    );
-  }
-
-  async uploadFile(files, parentId, req) {
+  async uploadFile(files, path, req) {
     try {
       const file = files;
       const parent = await this.fileRepository.findOne({
         where: {
           userId: req.user.id,
-          id: parentId,
+          path: path,
         },
       });
       const user = await this.userRepository.findByPk(req.user.id);
@@ -220,5 +196,29 @@ export class FileService {
     } catch (e) {
       throw new HttpException(`Download error ${e}`, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  createFile(file: File) {
+    const filePath = this.getPath(file);
+    try {
+      if (!fs.existsSync(filePath)) {
+        fs.mkdirSync(filePath, { recursive: true });
+      } else {
+        file.destroy();
+        throw new HttpException('File already exist', HttpStatus.BAD_REQUEST);
+      }
+    } catch (e) {
+      throw new HttpException(`Create file error ${e}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  getPath(file: File) {
+    return (
+      path.resolve(__dirname, '..', 'static/files') +
+      '\\' +
+      file.userId +
+      '\\' +
+      file.path
+    );
   }
 }

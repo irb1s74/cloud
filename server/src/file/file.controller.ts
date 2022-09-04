@@ -34,8 +34,8 @@ export class FileController {
 
   @Post('/create')
   @UseGuards(AuthGuard)
-  create(@Req() req: Request, @Body() dto: { name: string; parent?: number }) {
-    return this.fileService.createDir(dto.name, dto.parent, req);
+  create(@Req() req: Request, @Body() dto: { name: string; path?: string }) {
+    return this.fileService.createDir(dto.name, dto.path, req);
   }
 
   @Post('/upload')
@@ -44,9 +44,9 @@ export class FileController {
   update(
     @Req() req: Request,
     @UploadedFile() file,
-    @Body() dto: { parent?: number }
+    @Body() dto: { path?: string }
   ) {
-    return this.fileService.uploadFile(file, dto.parent, req);
+    return this.fileService.uploadFile(file, dto.path, req);
   }
 
   @Get('/download/:id')

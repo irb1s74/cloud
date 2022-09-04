@@ -5,7 +5,7 @@ import './AuthBtn.scss';
 const Logout = () => {
   return (
     <div className='logout-btn'>
-      <BiLogOut size={28} />
+      <BiLogOut size={22} />
     </div>
   );
 };

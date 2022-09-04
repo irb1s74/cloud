@@ -40,11 +40,11 @@ const fileAPI = createApi({
     }),
     createDir: build.mutation<
       IFile[],
-      { parentId: number | undefined; token: string; name: string }
+      { path: string | undefined; token: string; name: string }
     >({
-      query: ({ parentId = 0, token, name }) => ({
+      query: ({ path = '', token, name }) => ({
         url: `file/create`,
-        body: { name, parent: parentId },
+        body: { name, path },
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',

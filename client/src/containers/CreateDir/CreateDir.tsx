@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import fileAPI from '../../api/FileService';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useSearchParams } from 'react-router-dom';
 
 interface CreateDirProps {
   handleCloseModal: () => void;
@@ -19,6 +20,8 @@ interface CreateDirProps {
 }
 
 const CreateDir: FC<CreateDirProps> = memo(({ handleCloseModal, token }) => {
+  const [usePath] = useSearchParams();
+  const path = usePath.get('path');
   const [createDir, { data: files, error, isLoading }] =
     fileAPI.useCreateDirMutation();
 
@@ -30,7 +33,7 @@ const CreateDir: FC<CreateDirProps> = memo(({ handleCloseModal, token }) => {
       name: yup.string().required('Название обязательно '),
     }),
     onSubmit: async (values) => {
-      await createDir({ parentId: 0, name: values.name, token });
+      await createDir({ path: path ? path : '', name: values.name, token });
       if (error && 'status' in error && error.status === 400) {
         formik.errors.name = 'Директория с таким именем уже существует';
       } else {

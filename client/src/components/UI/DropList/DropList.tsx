@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { Menu } from '@mui/material';
+import { Menu, MenuList } from '@mui/material';
 
 interface DropListProps {
   anchorEl: HTMLElement | null;
@@ -20,10 +20,16 @@ const DropList: FC<DropListProps> = ({
       open={open}
       onClose={handleClose}
       onClick={handleClose}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
     >
-      {children}
+      <MenuList sx={{ p: 0 }}>{children}</MenuList>
     </Menu>
   );
 };
