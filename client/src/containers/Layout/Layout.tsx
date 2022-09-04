@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   createSearchParams,
   useNavigate,
@@ -6,19 +6,17 @@ import {
 } from 'react-router-dom';
 import fileAPI from '../../api/FileService';
 import File from '../../components/UI/File/File';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useAppSelector } from '../../hooks/redux';
 import { IUser } from '../../models/IUser';
 import { ELayouts } from '../../models/ELayouts';
 import './Layout.scss';
 import ContextMenu from '../../components/Layout/ContextMenu/ContextMenu';
-import { fileSlice } from '../../store/reducers/fileReducer';
 
 interface LayoutProps {
   user: IUser;
-  setParent: (parentId: number) => void;
 }
 
-const Layout: FC<LayoutProps> = ({ user, setParent }) => {
+const Layout: FC<LayoutProps> = ({ user }) => {
   const navigate = useNavigate();
   const [usePath] = useSearchParams();
   const path = usePath.get('path');
@@ -47,12 +45,6 @@ const Layout: FC<LayoutProps> = ({ user, setParent }) => {
     path: path ? path : '',
     token: user.token,
   });
-
-  useEffect(() => {
-    if (files && files.length) {
-      setParent(files[0].parentId);
-    }
-  }, [files]);
 
   const handleSelectFile = (index: number) => {
     return () => {
@@ -95,13 +87,9 @@ const Layout: FC<LayoutProps> = ({ user, setParent }) => {
 };
 
 const ContainerLayout: FC<{ type: ELayouts }> = () => {
-  const disptatch = useAppDispatch();
   const user = useAppSelector((state) => state.authReducer.user);
-  const setParent = useCallback(
-    (parentId: number) => disptatch(fileSlice.actions.setParent(parentId)),
-    []
-  );
-  return <Layout setParent={setParent} user={user} />;
+
+  return <Layout user={user} />;
 };
 
 export default ContainerLayout;
