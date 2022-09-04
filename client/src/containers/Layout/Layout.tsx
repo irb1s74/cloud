@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import {
   createSearchParams,
   useNavigate,
@@ -6,11 +6,12 @@ import {
 } from 'react-router-dom';
 import fileAPI from '../../api/FileService';
 import File from '../../components/UI/File/File';
+import ContextMenu from '../../components/Layout/ContextMenu/ContextMenu';
 import { useAppSelector } from '../../hooks/redux';
 import { IUser } from '../../models/IUser';
 import { ELayouts } from '../../models/ELayouts';
 import './Layout.scss';
-import ContextMenu from '../../components/Layout/ContextMenu/ContextMenu';
+import { IFile } from '../../models/IFile';
 
 interface LayoutProps {
   user: IUser;
@@ -20,6 +21,7 @@ const Layout: FC<LayoutProps> = ({ user }) => {
   const navigate = useNavigate();
   const [usePath] = useSearchParams();
   const path = usePath.get('path');
+  const file = useRef<IFile>();
   const [selectFile, setFile] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -30,6 +32,7 @@ const Layout: FC<LayoutProps> = ({ user }) => {
   ) => {
     event.preventDefault();
     setFile(index);
+    file.current = files && files[index];
     setAnchorEl(event.currentTarget);
   };
 
@@ -56,8 +59,9 @@ const Layout: FC<LayoutProps> = ({ user }) => {
           })}`,
         });
         setFile(null);
-      } else {
+      } else if (files) {
         setFile(index);
+        file.current = files[index];
       }
     };
   };
@@ -81,7 +85,13 @@ const Layout: FC<LayoutProps> = ({ user }) => {
             ))}
         </div>
       </section>
-      <ContextMenu anchorEl={anchorEl} open={open} handleClose={handleClose} />
+      <ContextMenu
+        file={file.current}
+        user={user}
+        anchorEl={anchorEl}
+        open={open}
+        handleClose={handleClose}
+      />
     </React.Fragment>
   );
 };

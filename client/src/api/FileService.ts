@@ -54,6 +54,29 @@ const fileAPI = createApi({
       }),
       invalidatesTags: ['Files'],
     }),
+    uploadFile: build.mutation<IFile[], { token: string; formData: FormData }>({
+      query: ({ token, formData }) => ({
+        url: `file/upload`,
+        body: formData,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          Authorization: 'Bearer ' + token,
+        },
+        method: 'POST',
+      }),
+      invalidatesTags: ['Files'],
+    }),
+    deleteFile: build.mutation<IFile[], { token: string; fileId: number }>({
+      query: ({ token, fileId }) => ({
+        url: `file/delete/${fileId}`,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          Authorization: 'Bearer ' + token,
+        },
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Files'],
+    }),
   }),
 });
 export default fileAPI;

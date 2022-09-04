@@ -1,16 +1,33 @@
 import React, { FC, memo } from 'react';
 import DropList from '../../UI/DropList/DropList';
 import { Divider, ListItemIcon, ListItemText, MenuItem } from '@mui/material';
-import { HiCloudDownload, HiTrash, HiShare } from 'react-icons/hi';
+import { HiCloudDownload, HiShare, HiTrash } from 'react-icons/hi';
 import { CgRename } from 'react-icons/cg';
+import fileAPI from '../../../api/FileService';
+import { IFile } from '../../../models/IFile';
+import { IUser } from '../../../models/IUser';
 
 interface ContextMenuProps {
   anchorEl: null | HTMLElement;
   open: boolean;
   handleClose: () => void;
+  user: IUser;
+  file: IFile | undefined;
 }
 
-const ContextMenu: FC<ContextMenuProps> = ({ anchorEl, open, handleClose }) => {
+const ContextMenu: FC<ContextMenuProps> = ({
+  anchorEl,
+  open,
+  handleClose,
+  user,
+  file,
+}) => {
+  const [deleteFile] = fileAPI.useDeleteFileMutation();
+  const handleDelete = async () => {
+    if (file?.id) {
+      deleteFile({ token: user.token, fileId: file.id });
+    }
+  };
   return (
     <DropList anchorEl={anchorEl} open={open} handleClose={handleClose}>
       <MenuItem>
@@ -33,7 +50,7 @@ const ContextMenu: FC<ContextMenuProps> = ({ anchorEl, open, handleClose }) => {
         <ListItemText>Переименовать</ListItemText>
       </MenuItem>
       <Divider />
-      <MenuItem>
+      <MenuItem onClick={handleDelete}>
         <ListItemIcon>
           <HiTrash size={22} />
         </ListItemIcon>

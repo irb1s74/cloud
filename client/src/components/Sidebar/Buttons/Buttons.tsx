@@ -2,20 +2,38 @@ import React, { FC, memo, useRef } from 'react';
 import { HiCloudUpload, HiOutlinePlus } from 'react-icons/hi';
 import { IModal } from '../../../models/IModal';
 import { EModal } from '../../../models/EModal';
+import fileAPI from '../../../api/FileService';
+import { useSearchParams } from 'react-router-dom';
+import { IUser } from '../../../models/IUser';
 
 interface SidebarButtonsProps {
+  user: IUser;
   setModal: (payload: IModal) => void;
 }
 
-const SidebarButtons: FC<SidebarButtonsProps> = ({ setModal }) => {
+const SidebarButtons: FC<SidebarButtonsProps> = ({ setModal, user }) => {
+  const [usePath] = useSearchParams();
+  const path = usePath.get('path');
+
+  const [uploadFile, { data, error, isLoading }] =
+    fileAPI.useUploadFileMutation();
+
   const handleOpenCreateDirModal = () => {
     setModal({ id: EModal.createDir, type: EModal.createDir, option: {} });
   };
   const files = useRef(document.createElement('input'));
 
   const handleUpdateFiles = () => {
-    if (files.current.files) {
-      console.log(files.current.files);
+    if (files.current.files && files.current.files.length) {
+      Array.from(files.current.files).forEach(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('path', path ? path : '');
+        await uploadFile({
+          token: user.token,
+          formData,
+        });
+      });
     }
   };
 

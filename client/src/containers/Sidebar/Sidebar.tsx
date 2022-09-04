@@ -6,44 +6,32 @@ import Usage from '../../components/Sidebar/Usage/Usage';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { modalSlice } from '../../store/reducers/modalReducer';
 import { IModal } from '../../models/IModal';
+import { IUser } from '../../models/IUser';
 
 interface SidebarProps {
-  userDiskSpace: number;
-  userUsedSpace: number;
+  user: IUser;
   setModal: (payload: IModal) => void;
 }
 
-const Sidebar: FC<SidebarProps> = memo(
-  ({ userDiskSpace, userUsedSpace, setModal }) => {
-    return (
-      <div className='sidebar'>
-        <Buttons setModal={setModal} />
-        <Nav />
-        <Usage userDiskSpace={userDiskSpace} userUsedSpace={userUsedSpace} />
-      </div>
-    );
-  }
-);
+const Sidebar: FC<SidebarProps> = memo(({ user, setModal }) => {
+  return (
+    <div className='sidebar'>
+      <Buttons user={user} setModal={setModal} />
+      <Nav />
+      <Usage user={user} />
+    </div>
+  );
+});
 
 const SidebarContainer = () => {
   const dispatch = useAppDispatch();
-  const userUsedSpace = useAppSelector(
-    (state) => state.authReducer.user.usedSpace
-  );
-  const userDiskSpace = useAppSelector(
-    (state) => state.authReducer.user.diskSpace
-  );
+  const user = useAppSelector((state) => state.authReducer.user);
+
   const setModal = useCallback(
     (payload: IModal) => dispatch(modalSlice.actions.setModal(payload)),
     []
   );
-  return (
-    <Sidebar
-      setModal={setModal}
-      userUsedSpace={userUsedSpace}
-      userDiskSpace={userDiskSpace}
-    />
-  );
+  return <Sidebar setModal={setModal} user={user} />;
 };
 
 export default SidebarContainer;

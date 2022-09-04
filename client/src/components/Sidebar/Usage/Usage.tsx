@@ -1,18 +1,15 @@
 import React, { FC, memo } from 'react';
 import { BorderLinearProgress } from './widget/BorderLinearProgress';
 import { sizeFormatter } from '../../../helpers/sizeFormatter';
+import { IUser } from '../../../models/IUser';
 
 interface SidebarUsageProps {
-  userDiskSpace: number;
-  userUsedSpace: number;
+  user: IUser;
 }
 
-const SidebarUsage: FC<SidebarUsageProps> = ({
-  userDiskSpace,
-  userUsedSpace,
-}) => {
-  const unUsedSpace = userDiskSpace - userUsedSpace;
-  const value = (userUsedSpace / userDiskSpace) * 100;
+const SidebarUsage: FC<SidebarUsageProps> = ({ user }) => {
+  const unUsedSpace = user.diskSpace - user.usedSpace;
+  const value = (user.usedSpace / user.diskSpace) * 100;
   return (
     <div className='sidebar__usage'>
       <BorderLinearProgress
@@ -21,7 +18,7 @@ const SidebarUsage: FC<SidebarUsageProps> = ({
         value={value}
       />
       <div className='text'>
-        Свободно {sizeFormatter(unUsedSpace)} из {sizeFormatter(userDiskSpace)}
+        Свободно {sizeFormatter(unUsedSpace)} из {sizeFormatter(user.diskSpace)}
       </div>
     </div>
   );

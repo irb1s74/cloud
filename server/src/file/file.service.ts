@@ -86,17 +86,16 @@ export class FileService {
     }
   }
 
-  async uploadFile(files, path, req) {
+  async uploadFile(uploadFile, uploadFilePath, req) {
     try {
-      const file = files;
+      const file = uploadFile;
       const parent = await this.fileRepository.findOne({
         where: {
           userId: req.user.id,
-          path: path,
+          path: uploadFilePath,
         },
       });
       const user = await this.userRepository.findByPk(req.user.id);
-
       if (user.usedSpace + file.size > user.diskSpace) {
         return new HttpException(
           'There no space on the disk',
@@ -105,6 +104,7 @@ export class FileService {
       }
 
       user.usedSpace += file.size;
+      console.log(file.originalname);
 
       let checkFilePath;
       if (parent) {
@@ -139,7 +139,6 @@ export class FileService {
 
       await dbFile.save();
       await user.save();
-
       return dbFile;
     } catch (e) {
       throw new HttpException(`Error upload file ${e}`, HttpStatus.BAD_REQUEST);
