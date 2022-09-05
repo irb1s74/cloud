@@ -13,7 +13,6 @@ interface SidebarButtonsProps {
 
 const SidebarButtons: FC<SidebarButtonsProps> = ({ setModal, user }) => {
   const [usePath] = useSearchParams();
-  const path = usePath.get('path');
   const [uploadFile] = fileAPI.useUploadFileMutation();
 
   const handleOpenCreateDirModal = () => {
@@ -22,6 +21,7 @@ const SidebarButtons: FC<SidebarButtonsProps> = ({ setModal, user }) => {
   const files = useRef(document.createElement('input'));
 
   const handleUpdateFiles = () => {
+    const path = usePath.get('path');
     if (files.current.files && files.current.files.length) {
       Array.from(files.current.files).forEach(async (file) => {
         const formData = new FormData();

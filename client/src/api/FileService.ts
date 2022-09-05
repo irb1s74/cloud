@@ -66,11 +66,14 @@ const fileAPI = createApi({
       }),
       invalidatesTags: ['Files'],
     }),
+
     deleteFile: build.mutation<IFile[], { token: string; fileId: number }>({
       query: ({ token, fileId }) => ({
         url: `file/delete/${fileId}`,
         headers: {
           'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': 'attachment',
           Authorization: 'Bearer ' + token,
         },
         method: 'DELETE',

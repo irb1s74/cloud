@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   Req,
@@ -19,12 +20,6 @@ import { Request } from 'express';
 @Controller('file')
 export class FileController {
   constructor(private fileService: FileService) {}
-
-  @Get('/:parent/:sort')
-  @UseGuards(AuthGuard)
-  getFiles(@Param('sort') sort, @Param('parent') parent, @Req() req: Request) {
-    return this.fileService.getFiles(parent, sort, req);
-  }
 
   @Post('/path')
   @UseGuards(AuthGuard)
@@ -50,6 +45,7 @@ export class FileController {
   }
 
   @Get('/download/:id')
+  @Header('Content-type', 'application/octet-stream')
   @UseGuards(AuthGuard)
   async downloadFile(@Param('id') fileId, @Req() req: Request, @Res() res) {
     const file = await this.fileService.downloadFile(fileId, req);
