@@ -8,6 +8,10 @@ html {
   box-sizing: inherit;
 }
 
+* {
+  outline: none;
+}
+
 .page {
   height: 100%;
   font-family: var(--font-family, sans-serif);

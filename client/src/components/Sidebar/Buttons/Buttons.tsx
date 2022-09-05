@@ -14,9 +14,7 @@ interface SidebarButtonsProps {
 const SidebarButtons: FC<SidebarButtonsProps> = ({ setModal, user }) => {
   const [usePath] = useSearchParams();
   const path = usePath.get('path');
-
-  const [uploadFile, { data, error, isLoading }] =
-    fileAPI.useUploadFileMutation();
+  const [uploadFile] = fileAPI.useUploadFileMutation();
 
   const handleOpenCreateDirModal = () => {
     setModal({ id: EModal.createDir, type: EModal.createDir, option: {} });

@@ -89,6 +89,9 @@ export class FileService {
   async uploadFile(uploadFile, uploadFilePath, req) {
     try {
       const file = uploadFile;
+      file.originalname = Buffer.from(file.originalname, 'latin1').toString(
+        'utf8'
+      );
       const parent = await this.fileRepository.findOne({
         where: {
           userId: req.user.id,
@@ -104,7 +107,6 @@ export class FileService {
       }
 
       user.usedSpace += file.size;
-      console.log(file.originalname);
 
       let checkFilePath;
       if (parent) {
