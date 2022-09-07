@@ -1,10 +1,10 @@
 import React, { ReactElement } from 'react';
-import { HiClock, HiFolder, HiTrash } from 'react-icons/hi';
+import { HiClock, HiFolder, HiBookmark } from 'react-icons/hi';
 
 const getIcon = (type: string): ReactElement | null => {
   switch (type) {
-    case 'trash':
-      return <HiTrash size='30' className='icon' />;
+    case 'bookmark':
+      return <HiBookmark size='30' className='icon' />;
     case 'cloc':
       return <HiClock size='30' className='icon' />;
     case 'folder':

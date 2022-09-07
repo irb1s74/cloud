@@ -1,5 +1,5 @@
 export enum ELayouts {
   recent = 'recent',
-  trash = 'trash',
-  files = 'files'
+  bookmarks = 'bookmarks',
+  files = 'files',
 }

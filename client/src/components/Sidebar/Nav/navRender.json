@@ -1,17 +1,17 @@
 [
   {
-    "name": "Recent",
+    "name": "Последние",
     "path": "recent",
     "icon": "cloc"
   },
   {
-    "name": "Files",
+    "name": "Файлы",
     "path": "files",
     "icon": "folder"
   },
   {
-    "name": "Trash",
-    "path": "trash",
-    "icon": "trash"
+    "name": "Избранное",
+    "path": "bookmarks",
+    "icon": "bookmark"
   }
 ]

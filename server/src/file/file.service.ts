@@ -63,9 +63,14 @@ export class FileService {
         type: 'dir',
         userId: req.user.id,
       });
-      const parentFile = await this.fileRepository.findOne({
-        where: { userId: req.user.id, path: path },
-      });
+      let parentFile;
+
+      if (path) {
+        parentFile = await this.fileRepository.findOne({
+          where: { userId: req.user.id, path: path },
+        });
+      }
+
       if (parentFile) {
         file.path = `${parentFile.path}\\${file.name}`;
         file.parentId = parentFile.id;
@@ -78,7 +83,6 @@ export class FileService {
       await file.save();
       return file;
     } catch (e) {
-      console.log(e);
       throw new HttpException(
         `Create dir error ${e.response}`,
         HttpStatus.BAD_REQUEST

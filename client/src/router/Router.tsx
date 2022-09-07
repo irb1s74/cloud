@@ -16,7 +16,10 @@ const Router: FC<RouterProps> = memo(({ isAuth }) => {
         <React.Fragment>
           <Route path='recent/*' element={<Layout type={ELayouts.recent} />} />
           <Route path='files/*' element={<Layout type={ELayouts.files} />} />
-          <Route path='trash/*' element={<Layout type={ELayouts.trash} />} />
+          <Route
+            path='bookmarks/*'
+            element={<Layout type={ELayouts.bookmarks} />}
+          />
           <Route path='*' element={<Navigate to='recent' />} />
         </React.Fragment>
       ) : (

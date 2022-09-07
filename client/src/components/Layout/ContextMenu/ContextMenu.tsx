@@ -1,7 +1,12 @@
 import React, { FC, memo } from 'react';
 import DropList from '../../UI/DropList/DropList';
 import { Divider, ListItemIcon, ListItemText, MenuItem } from '@mui/material';
-import { HiCloudDownload, HiShare, HiTrash } from 'react-icons/hi';
+import {
+  HiBookmarkAlt,
+  HiCloudDownload,
+  HiShare,
+  HiTrash,
+} from 'react-icons/hi';
 import { CgRename } from 'react-icons/cg';
 import fileAPI from '../../../api/FileService';
 import { IFile } from '../../../models/IFile';
@@ -69,6 +74,12 @@ const ContextMenu: FC<ContextMenuProps> = ({
           <CgRename size={22} />
         </ListItemIcon>
         <ListItemText>Переименовать</ListItemText>
+      </MenuItem>
+      <MenuItem>
+        <ListItemIcon>
+          <HiBookmarkAlt size={22} />
+        </ListItemIcon>
+        <ListItemText>Добавить в избранное</ListItemText>
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleDelete}>

@@ -33,6 +33,7 @@ const CreateDir: FC<CreateDirProps> = memo(({ handleCloseModal, token }) => {
       name: yup.string().required('Название обязательно '),
     }),
     onSubmit: async (values) => {
+      console.log(path);
       await createDir({ path: path ? path : '', name: values.name, token });
       if (error && 'status' in error && error.status === 400) {
         formik.errors.name = 'Директория с таким именем уже существует';
@@ -57,6 +58,7 @@ const CreateDir: FC<CreateDirProps> = memo(({ handleCloseModal, token }) => {
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={formik.touched.name && formik.errors.name}
+            focused
           />
         </DialogContent>
         <DialogActions>
