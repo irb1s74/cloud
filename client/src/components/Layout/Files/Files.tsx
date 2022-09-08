@@ -49,6 +49,7 @@ const Files: FC<FilesProps> = ({ user }) => {
     },
     [files, selectFile]
   );
+
   const handleOpenActions = useCallback(
     (event: React.MouseEvent<HTMLElement>, index: number) => {
       event.preventDefault();
