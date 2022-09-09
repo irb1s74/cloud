@@ -49,7 +49,11 @@ export class FileController {
   @UseGuards(AuthGuard)
   async downloadFile(@Param('id') fileId, @Req() req: Request, @Res() res) {
     const file = await this.fileService.downloadFile(fileId, req);
-    return res.download(file?.path, file?.fileName);
+    if ('path' in file) {
+      return res.download(file.path, file.fileName);
+    }
+    res.attachment(`filename.zip`);
+    return res.send(file);
   }
 
   @Delete('/delete/:id')

@@ -4,6 +4,9 @@ import { File } from './model/File.model';
 import { User } from '../user/model/User.model';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as JSZip from 'jszip';
+
+const zip = new JSZip();
 
 @Injectable()
 export class FileService {
@@ -188,14 +191,30 @@ export class FileService {
     }
   }
 
-  async downloadFile(fileId, req): Promise<{ path: string; fileName: string }> {
+  async downloadFile(
+    fileId,
+    req
+  ): Promise<{ path?: string; fileName: string; buffer?: Buffer } | Buffer> {
     try {
       const file = await this.fileRepository.findOne({
         where: { id: fileId, userId: req.user.id },
       });
-      const path = this.getPath(file);
-      if (fs.existsSync(path)) {
-        return { path, fileName: file.name };
+      if (file.type === 'dir') {
+        const children = await this.fileRepository.findAll({
+          where: { parentId: fileId, userId: req.user.id },
+        });
+        if (children) {
+          for (const child of children) {
+            const childData = fs.readFileSync(this.getPath(child));
+            zip.file(child.name, childData);
+          }
+          return await zip.generateAsync({ type: 'nodebuffer' });
+        }
+      } else {
+        const path = this.getPath(file);
+        if (fs.existsSync(path)) {
+          return { path, fileName: file.name };
+        }
       }
       new HttpException(`File not found`, HttpStatus.NOT_FOUND);
     } catch (e) {

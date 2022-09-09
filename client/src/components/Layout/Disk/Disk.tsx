@@ -1,10 +1,10 @@
 import React, { FC, memo, useState } from 'react';
-import { IFile } from '../../../models/IFile';
 import { Backdrop, Stack } from '@mui/material';
 import { GiFiles } from 'react-icons/gi';
 import { useSearchParams } from 'react-router-dom';
 import fileAPI from '../../../api/FileService';
 import { IUser } from '../../../models/IUser';
+import { IFile } from '../../../models/IFile';
 import Setting from './widget/Setting/Setting';
 import DiskGrid from './widget/Grid/Grid';
 import DiskList from './widget/List/List';
