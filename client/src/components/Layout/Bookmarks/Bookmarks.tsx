@@ -14,7 +14,7 @@ interface FilesProps {
   user: IUser;
 }
 
-const Files: FC<FilesProps> = ({ user }) => {
+const Bookmarks: FC<FilesProps> = ({ user }) => {
   const navigate = useNavigate();
   const [usePath] = useSearchParams();
   const path = usePath.get('path');
@@ -65,7 +65,7 @@ const Files: FC<FilesProps> = ({ user }) => {
 
   return (
     <section className='layout'>
-      <div className='layout__name'>Файлы</div>
+      <div className='layout__name'>Избранное</div>
       {isLoading && <h1>Идет загрузка...</h1>}
       {error && <h1>Произошла ошибка при загрузке</h1>}
       {files && (
@@ -88,4 +88,4 @@ const Files: FC<FilesProps> = ({ user }) => {
   );
 };
 
-export default memo(Files);
+export default memo(Bookmarks);

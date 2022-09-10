@@ -22,7 +22,7 @@ interface CreateDirProps {
 const CreateDir: FC<CreateDirProps> = memo(({ handleCloseModal, token }) => {
   const [usePath] = useSearchParams();
   const path = usePath.get('path');
-  const [createDir, { data: files, error, isLoading }] =
+  const [createDir, { data: res, error, isLoading }] =
     fileAPI.useCreateDirMutation();
 
   const formik = useFormik({
@@ -32,16 +32,21 @@ const CreateDir: FC<CreateDirProps> = memo(({ handleCloseModal, token }) => {
     validationSchema: yup.object({
       name: yup.string().required('Название обязательно '),
     }),
-    onSubmit: async (values) => {
-      console.log(path);
-      await createDir({ path: path ? path : '', name: values.name, token });
-      if (error && 'status' in error && error.status === 400) {
-        formik.errors.name = 'Директория с таким именем уже существует';
-      } else {
-        handleCloseModal();
-      }
+    onSubmit: (values) => {
+      createDir({ path: path ? path : '', name: values.name, token })
+        .unwrap()
+        .then(() => {
+          handleCloseModal();
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.status === 400) {
+            formik.errors.name = 'Директория с таким именем уже существует';
+          }
+        });
     },
   });
+
   return (
     <Dialog open={true} onClose={handleCloseModal} maxWidth='xs' fullWidth>
       <DialogTitle>Создать директорию</DialogTitle>
