@@ -1,5 +1,5 @@
 import React, { FC, memo, useState } from 'react';
-import { Backdrop, Stack } from '@mui/material';
+import { Backdrop, SelectChangeEvent, Stack } from '@mui/material';
 import { GiFiles } from 'react-icons/gi';
 import { useSearchParams } from 'react-router-dom';
 import fileAPI from '../../../api/FileService';
@@ -11,19 +11,25 @@ import DiskList from './widget/List/List';
 
 interface DiskProps {
   files: IFile[];
+  sort: string;
+  optionSort: boolean;
   handleSelectFile: (index: number) => () => void;
   handleOpenActions: (
     event: React.MouseEvent<HTMLElement>,
     index: number
   ) => void;
+  handleSelectSort: (event: SelectChangeEvent) => void;
   selectFile: number | null;
   user: IUser;
 }
 
 const Disk: FC<DiskProps> = ({
   files,
+  sort,
+  optionSort,
   selectFile,
   handleSelectFile,
+  handleSelectSort,
   user,
   handleOpenActions,
 }) => {
@@ -84,8 +90,21 @@ const Disk: FC<DiskProps> = ({
   };
 
   return (
-    <Stack direction='column' sx={{ overflowY: 'auto' }} alignItems='flex-end'>
-      <Setting alignment={alignment} handleChange={handleChangeAlignment} />
+    <Stack
+      sx={{ overflowY: 'auto', height: '100%' }}
+      alignItems='flex-end'
+      direction='column'
+      onDragEnter={dragEnterFunc}
+      onDragOver={dragOver}
+      onDragLeave={dragLeave}
+    >
+      <Setting
+        alignment={alignment}
+        sort={sort}
+        optionSort={optionSort}
+        handleSelectSort={handleSelectSort}
+        handleChange={handleChangeAlignment}
+      />
       <div className='layout__scroll'>
         {alignment === 'grid' ? (
           <DiskGrid
@@ -93,9 +112,6 @@ const Disk: FC<DiskProps> = ({
             selectFile={selectFile}
             handleSelectFile={handleSelectFile}
             handleOpenActions={handleOpenActions}
-            dragOver={dragOver}
-            dragLeave={dragLeave}
-            dragEnterFunc={dragEnterFunc}
           />
         ) : (
           <DiskList
@@ -103,9 +119,6 @@ const Disk: FC<DiskProps> = ({
             selectFile={selectFile}
             handleSelectFile={handleSelectFile}
             handleOpenActions={handleOpenActions}
-            dragOver={dragOver}
-            dragLeave={dragLeave}
-            dragEnterFunc={dragEnterFunc}
           />
         )}
       </div>

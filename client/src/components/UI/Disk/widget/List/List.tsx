@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { getFileIcon } from '../../../../../helpers/getFileIcons';
 import { sizeFormatter } from '../../../../../helpers/sizeFormatter';
+import dayjs from 'dayjs';
 
 interface DiskListProps {
   files: IFile[];
@@ -17,9 +18,6 @@ interface DiskListProps {
     event: React.MouseEvent<HTMLElement>,
     index: number
   ) => void;
-  dragOver: (event: React.DragEvent<HTMLDivElement>) => void;
-  dragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
-  dragEnterFunc: (event: React.DragEvent<HTMLDivElement>) => void;
 }
 
 const DiskList: FC<DiskListProps> = ({
@@ -27,17 +25,9 @@ const DiskList: FC<DiskListProps> = ({
   handleSelectFile,
   handleOpenActions,
   selectFile,
-  dragOver,
-  dragEnterFunc,
-  dragLeave,
 }) => {
   return (
-    <div
-      onDragEnter={dragEnterFunc}
-      onDragOver={dragOver}
-      onDragLeave={dragLeave}
-      className=''
-    >
+    <div className=''>
       <List sx={{ width: '100%', height: '100%' }}>
         {files.map((file, index) => (
           <ListItemButton
@@ -48,10 +38,10 @@ const DiskList: FC<DiskListProps> = ({
           >
             <ListItemIcon>{getFileIcon(file.type)}</ListItemIcon>
             <ListItemText primary={file.name} />
-
             {file.type !== 'dir' && (
               <ListItemText
                 sx={{ textAlign: 'end' }}
+                primary={dayjs(file.createdAt).format('DD.MM.YYYY')}
                 secondary={sizeFormatter(file.size)}
               />
             )}

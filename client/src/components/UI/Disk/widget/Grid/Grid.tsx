@@ -10,9 +10,6 @@ interface DiskGridProps {
     event: React.MouseEvent<HTMLElement>,
     index: number
   ) => void;
-  dragOver: (event: React.DragEvent<HTMLDivElement>) => void;
-  dragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
-  dragEnterFunc: (event: React.DragEvent<HTMLDivElement>) => void;
 }
 
 const DiskGrid: FC<DiskGridProps> = ({
@@ -20,17 +17,9 @@ const DiskGrid: FC<DiskGridProps> = ({
   handleSelectFile,
   handleOpenActions,
   selectFile,
-  dragOver,
-  dragEnterFunc,
-  dragLeave,
 }) => {
   return (
-    <div
-      onDragEnter={dragEnterFunc}
-      onDragOver={dragOver}
-      onDragLeave={dragLeave}
-      className='layout__grid'
-    >
+    <div className='layout__grid'>
       {files.map((file, index) => (
         <div
           key={file.id}

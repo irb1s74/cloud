@@ -15,23 +15,23 @@ export class FileService {
     @InjectModel(User) private userRepository: typeof User
   ) {}
 
-  async getFiles(parent, sort, req) {
+  async getFiles(parent, sort, option, req) {
     try {
       switch (sort) {
         case 'time':
           return await this.fileRepository.findAll({
             where: { userId: req.user.id, parentId: parent },
-            order: [['createdAt', 'DESC']],
+            order: [['createdAt', `${option ? 'ASC' : 'DESC'}`]],
           });
         case 'name':
           return await this.fileRepository.findAll({
             where: { userId: req.user.id, parentId: parent },
-            order: [['name', 'DESC']],
+            order: [['name', `${option ? 'ASC' : 'DESC'}`]],
           });
         case 'size':
           return await this.fileRepository.findAll({
             where: { userId: req.user.id, parentId: parent },
-            order: [['size', 'DESC']],
+            order: [['size', `${option ? 'ASC' : 'DESC'}`]],
           });
         default:
           return await this.fileRepository.findAll({
@@ -44,15 +44,15 @@ export class FileService {
     }
   }
 
-  async getFilesByPath(path, req) {
+  async getFilesByPath(sort, path, option, req) {
     try {
       const parent = await this.fileRepository.findOne({
         where: { userId: req.user.id, path: path },
       });
       if (parent) {
-        return this.getFiles(parent.id, 'def', req);
+        return this.getFiles(parent.id, sort, option, req);
       }
-      return this.getFiles(0, 'def', req);
+      return this.getFiles(0, sort, option, req);
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     } catch (e) {
       throw new HttpException(`Get files error ${e}`, HttpStatus.BAD_REQUEST);
@@ -99,12 +99,15 @@ export class FileService {
       file.originalname = Buffer.from(file.originalname, 'latin1').toString(
         'utf8'
       );
-      const parent = await this.fileRepository.findOne({
-        where: {
-          userId: req.user.id,
-          path: uploadFilePath,
-        },
-      });
+      const parent =
+        uploadFilePath &&
+        (await this.fileRepository.findOne({
+          where: {
+            userId: req.user.id,
+            path: uploadFilePath,
+          },
+        }));
+
       const user = await this.userRepository.findByPk(req.user.id);
       if (user.usedSpace + file.size > user.diskSpace) {
         return new HttpException(

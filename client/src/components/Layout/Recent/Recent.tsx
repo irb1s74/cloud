@@ -9,6 +9,7 @@ import { IUser } from '../../../models/IUser';
 import { IFile } from '../../../models/IFile';
 import Disk from '../../UI/Disk/Disk';
 import ContextMenu from '../../UI/ContextMenu/ContextMenu';
+import { SelectChangeEvent } from '@mui/material';
 
 interface FilesProps {
   user: IUser;
@@ -20,7 +21,9 @@ const Recent: FC<FilesProps> = ({ user }) => {
   const path = usePath.get('path');
   const file = useRef<IFile>();
   const [selectFile, setFile] = useState<number | null>(null);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [sort, setSort] = useState<string>('time');
+  const [optionSort, setOptionSort] = useState<boolean>(true);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const {
@@ -29,9 +32,20 @@ const Recent: FC<FilesProps> = ({ user }) => {
     isLoading,
   } = fileAPI.useGetFilesByPathQuery({
     path: path ? path : '',
+    sort,
+    option: true,
     token: user.token,
   });
 
+  const handleSelectSort = useCallback((event: SelectChangeEvent) => {
+    if (event.target.value === 'ascending') {
+      setOptionSort(true);
+    } else if (event.target.value === 'descending') {
+      setOptionSort(false);
+    } else {
+      setSort(event.target.value);
+    }
+  }, []);
   const handleSelectFile = useCallback(
     (index: number) => () => {
       if (selectFile === index && files && files[index].type === 'dir') {
@@ -71,8 +85,11 @@ const Recent: FC<FilesProps> = ({ user }) => {
       {files && (
         <Disk
           user={user}
+          sort={sort}
+          optionSort={optionSort}
           files={files}
           selectFile={selectFile}
+          handleSelectSort={handleSelectSort}
           handleSelectFile={handleSelectFile}
           handleOpenActions={handleOpenActions}
         />
